@@ -1,0 +1,74 @@
+name: Build Android APK & Release
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'melody_app_src.zip'
+      - '.github/workflows/build-apk.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract Flutter project
+        run: |
+          mkdir -p app_build
+          unzip -o melody_app_src.zip -d app_build
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Generate Android project and patch
+        working-directory: app_build
+        run: |
+          flutter create . --org com.melodymusic --project-name melody_music --platforms android
+          rm -f test/widget_test.dart
+          python3 tools/patch_android.py
+
+      - name: Install dependencies and launcher icons
+        working-directory: app_build
+        run: |
+          flutter pub get
+          dart run flutter_launcher_icons
+
+      - name: Build release APK
+        working-directory: app_build
+        run: |
+          flutter build apk --release
+          cp build/app/outputs/flutter-apk/app-release.apk ../MelodyMusic.apk
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MelodyMusic-APK
+          path: MelodyMusic.apk
+          if-no-files-found: error
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if gh release view v1.0.0 >/dev/null 2>&1; then
+            gh release upload v1.0.0 MelodyMusic.apk --clobber
+          else
+            gh release create v1.0.0 MelodyMusic.apk \
+              --title "Melody Music v1.0.0 (Android APK)" \
+              --notes "Download MelodyMusic.apk directly on your Android phone and install it. Works offline with local audio/video playback, cover art, playlists, repeat, background controls, and in-app YouTube playlist viewing."
+          fi
