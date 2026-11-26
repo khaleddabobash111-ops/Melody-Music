@@ -1,0 +1,20 @@
+{
+  "name": "Melody Music",
+  "short_name": "Melody",
+  "description": "A sleek mobile music player with built-in ambient & lo-fi tracks, live visualizer, 3-band EQ, and local audio import.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0D0E12",
+  "theme_color": "#0D0E12",
+  "categories": ["music", "entertainment"],
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

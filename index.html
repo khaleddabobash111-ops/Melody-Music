@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#0D0E12" />
+  <meta name="description" content="Melody Music — Your sleek mobile music player with built-in chill tracks, equalizer, visualizer, and local audio playback." />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Melody Music" />
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="./icon.svg" />
+  <link rel="apple-touch-icon" href="./icon.svg" />
+  <title>Melody Music</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Top Header -->
+    <header class="top-bar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <span></span><span></span><span></span><span></span>
+        </div>
+        <span class="brand-name">MELODY MUSIC</span>
+      </div>
+      <div class="top-actions">
+        <button class="icon-btn" id="btn-import-top" title="Add songs from phone" aria-label="Import songs from device">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 5v14M5 12h14"/>
+          </svg>
+        </button>
+        <button class="icon-btn" id="btn-eq-top" title="Equalizer" aria-label="Open equalizer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <line x1="6" y1="4" x2="6" y2="20"/>
+            <line x1="12" y1="4" x2="12" y2="20"/>
+            <line x1="18" y1="4" x2="18" y2="20"/>
+            <circle cx="6" cy="9" r="2.2" fill="currentColor"/>
+            <circle cx="12" cy="15" r="2.2" fill="currentColor"/>
+            <circle cx="18" cy="10" r="2.2" fill="currentColor"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Scrollable Viewport -->
+    <main class="main-content" id="main-content">
+      <!-- HOME VIEW -->
+      <section class="view active" id="view-home" aria-label="Home">
+        <div class="greeting-block">
+          <h1 id="greeting-title">Your music.</h1>
+          <p class="subtitle">A calm space for your favorite sounds.</p>
+        </div>
+
+        <!-- Mood Filter Chips -->
+        <div class="chip-row" id="mood-chips" role="tablist" aria-label="Filter by mood">
+          <button class="chip active" data-mood="All">All</button>
+          <button class="chip" data-mood="Chill">Chill</button>
+          <button class="chip" data-mood="Lo-Fi">Lo-Fi</button>
+          <button class="chip" data-mood="Ambient">Ambient</button>
+          <button class="chip" data-mood="Night">Night</button>
+          <button class="chip" data-mood="Local">My Files</button>
+        </div>
+
+        <!-- Hero Featured Card -->
+        <div class="hero-card" id="hero-card">
+          <div class="hero-bg-glow"></div>
+          <div class="hero-content">
+            <div class="hero-meta">
+              <span class="pill-badge" id="hero-badge">NOW FEATURED</span>
+              <h2 id="hero-title">Midnight Drive</h2>
+              <p id="hero-artist">Melody Artist • Chillwave</p>
+              <div class="hero-actions">
+                <button class="btn-primary" id="btn-hero-play">
+                  <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M8 5.14v14l11-7-11-7z"/></svg>
+                  <span id="hero-play-label">Play Now</span>
+                </button>
+                <button class="btn-glass" id="btn-hero-shuffle">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/>
+                    <polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/>
+                    <line x1="4" y1="4" x2="9" y2="9"/>
+                  </svg>
+                  Shuffle All
+                </button>
+              </div>
+            </div>
+            <div class="hero-art" id="hero-art" aria-hidden="true"></div>
+          </div>
+        </div>
+
+        <!-- Horizontal Curated Carousel -->
+        <div class="section-header">
+          <h3>Made For You</h3>
+          <span class="section-hint">Tap to play</span>
+        </div>
+        <div class="card-carousel" id="featured-carousel"></div>
+
+        <!-- Track List -->
+        <div class="section-header">
+          <h3 id="playlist-heading">Playlist</h3>
+          <span class="section-count" id="track-count">8 tracks</span>
+        </div>
+        <div class="track-list" id="home-track-list"></div>
+      </section>
+
+      <!-- SEARCH VIEW -->
+      <section class="view" id="view-search" aria-label="Search">
+        <div class="greeting-block">
+          <h1>Explore.</h1>
+          <p class="subtitle">Find a track, artist, or mood.</p>
+        </div>
+
+        <div class="search-box">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input type="search" id="search-input" placeholder="Songs, artists, or moods..." autocomplete="off" />
+          <button class="clear-btn hidden" id="search-clear" aria-label="Clear search">&times;</button>
+        </div>
+
+        <div id="search-results-section" class="hidden">
+          <div class="section-header">
+            <h3>Results</h3>
+            <span class="section-count" id="search-count">0</span>
+          </div>
+          <div class="track-list" id="search-track-list"></div>
+        </div>
+
+        <div id="browse-moods-section">
+          <div class="section-header">
+            <h3>Browse Vibes</h3>
+          </div>
+          <div class="mood-grid" id="mood-grid"></div>
+        </div>
+      </section>
+
+      <!-- LIBRARY VIEW -->
+      <section class="view" id="view-library" aria-label="Library">
+        <div class="greeting-block">
+          <h1>Library.</h1>
+          <p class="subtitle">Your favorites, playlists &amp; device files.</p>
+        </div>
+
+        <!-- Import Local Audio Banner -->
+        <div class="import-card" id="btn-import-card" role="button" tabindex="0">
+          <div class="import-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+          </div>
+          <div class="import-text">
+            <strong>Play Your Own Music</strong>
+            <span>Tap to load MP3, WAV, M4A, or OGG from your phone</span>
+          </div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="stats-row">
+          <div class="stat-card" id="stat-liked">
+            <span class="stat-value" id="stat-liked-count">0</span>
+            <span class="stat-label">Liked</span>
+          </div>
+          <div class="stat-card" id="stat-playlists">
+            <span class="stat-value" id="stat-playlists-count">0</span>
+            <span class="stat-label">Playlists</span>
+          </div>
+          <div class="stat-card" id="stat-local">
+            <span class="stat-value" id="stat-local-count">0</span>
+            <span class="stat-label">My Files</span>
+          </div>
+        </div>
+
+        <!-- Custom Playlists -->
+        <div class="section-header">
+          <h3>Your Playlists</h3>
+          <button class="text-btn" id="btn-new-playlist">+ New Playlist</button>
+        </div>
+        <div class="playlist-cards" id="custom-playlists-list"></div>
+
+        <!-- Liked Songs -->
+        <div class="section-header">
+          <h3>Liked Songs</h3>
+          <span class="section-count" id="liked-count-label">0 tracks</span>
+        </div>
+        <div class="track-list" id="liked-track-list"></div>
+
+        <!-- Recently Played -->
+        <div class="section-header">
+          <h3>Recently Played</h3>
+        </div>
+        <div class="track-list" id="recent-track-list"></div>
+      </section>
+    </main>
+
+    <!-- Floating Mini Player -->
+    <div class="mini-player" id="mini-player" role="region" aria-label="Mini player">
+      <div class="mini-progress-track">
+        <div class="mini-progress-fill" id="mini-progress-fill"></div>
+      </div>
+      <div class="mini-player-inner">
+        <div class="mini-tap-area" id="mini-open-player">
+          <div class="mini-art" id="mini-art"></div>
+          <div class="mini-info">
+            <div class="mini-title" id="mini-title">Midnight Drive</div>
+            <div class="mini-artist" id="mini-artist">Melody Artist</div>
+          </div>
+        </div>
+        <div class="mini-controls">
+          <button class="mini-btn" id="mini-like-btn" aria-label="Favorite">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </button>
+          <button class="mini-btn play-pill" id="mini-play-btn" aria-label="Play or pause">
+            <svg id="mini-play-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.14v14l11-7-11-7z"/></svg>
+          </button>
+          <button class="mini-btn" id="mini-next-btn" aria-label="Next track">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav" aria-label="Primary navigation">
+      <button class="nav-item active" data-view="home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5.5v-6.5h-5V21H4a1 1 0 0 1-1-1v-9.5z"/>
+        </svg>
+        <span>Home</span>
+      </button>
+      <button class="nav-item" data-view="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <span>Search</span>
+      </button>
+      <button class="nav-item" data-view="library">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+        </svg>
+        <span>Library</span>
+      </button>
+    </nav>
+
+    <!-- FULL-SCREEN NOW PLAYING DRAWER -->
+    <div class="player-sheet" id="player-sheet" aria-hidden="true">
+      <div class="player-backdrop" id="player-backdrop"></div>
+      <div class="player-sheet-inner">
+        <div class="sheet-handle-wrap" id="btn-close-player">
+          <div class="sheet-handle"></div>
+        </div>
+
+        <div class="player-top">
+          <button class="icon-btn" id="btn-collapse-player" aria-label="Minimize player">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="player-source">
+            <span class="player-source-label">NOW PLAYING</span>
+            <span class="player-source-name" id="player-source-name">Melody Playlist</span>
+          </div>
+          <button class="icon-btn" id="btn-lyrics-toggle" title="Mood Notes" aria-label="Toggle mood notes">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 6h16M4 12h12M4 18h8"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Artwork + Live Visualizer -->
+        <div class="artwork-stage">
+          <div class="artwork-card" id="player-artwork-card">
+            <div class="artwork-visual" id="player-artwork-visual"></div>
+            <canvas id="visualizer-canvas" width="320" height="84" aria-hidden="true"></canvas>
+            <!-- Mood / Liner Notes Overlay -->
+            <div class="lyrics-overlay hidden" id="lyrics-overlay">
+              <span class="lyrics-kicker">SOUND NOTES</span>
+              <div class="lyrics-body" id="lyrics-body"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Track Metadata -->
+        <div class="player-meta-row">
+          <div class="player-titles">
+            <h2 id="player-title">Midnight Drive</h2>
+            <p id="player-artist">Melody Artist</p>
+          </div>
+          <div class="player-meta-actions">
+            <button class="icon-btn" id="btn-add-to-playlist" title="Add to playlist" aria-label="Add to playlist">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+            </button>
+            <button class="icon-btn like-btn" id="btn-player-like" title="Favorite" aria-label="Favorite track">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Progress Scrubber -->
+        <div class="scrubber-block">
+          <input type="range" id="seek-slider" min="0" max="1000" value="0" aria-label="Seek audio position" />
+          <div class="time-row">
+            <span id="time-current">0:00</span>
+            <span class="quality-tag" id="quality-tag">STUDIO SYNTH • 48kHz</span>
+            <span id="time-total">2:48</span>
+          </div>
+        </div>
+
+        <!-- Transport Controls -->
+        <div class="transport-row">
+          <button class="ctrl-btn" id="btn-shuffle" aria-label="Shuffle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/>
+              <polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/>
+              <line x1="4" y1="4" x2="9" y2="9"/>
+            </svg>
+          </button>
+          <button class="ctrl-btn lg" id="btn-prev" aria-label="Previous track">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+          </button>
+          <button class="play-main-btn" id="btn-play-main" aria-label="Play or pause">
+            <svg id="main-play-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.14v14l11-7-11-7z"/></svg>
+          </button>
+          <button class="ctrl-btn lg" id="btn-next" aria-label="Next track">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+          </button>
+          <button class="ctrl-btn" id="btn-repeat" aria-label="Repeat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/>
+              <polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>
+            </svg>
+            <span class="repeat-one-badge hidden" id="repeat-one-badge">1</span>
+          </button>
+        </div>
+
+        <!-- Bottom Utilities -->
+        <div class="player-utils">
+          <button class="util-pill" id="btn-open-eq">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <line x1="6" y1="5" x2="6" y2="19"/><line x1="12" y1="5" x2="12" y2="19"/><line x1="18" y1="5" x2="18" y2="19"/>
+              <circle cx="6" cy="9" r="2" fill="currentColor"/><circle cx="12" cy="15" r="2" fill="currentColor"/><circle cx="18" cy="11" r="2" fill="currentColor"/>
+            </svg>
+            <span id="eq-pill-label">EQ</span>
+          </button>
+          <button class="util-pill" id="btn-open-sleep">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+            <span id="sleep-pill-label">Timer</span>
+          </button>
+          <button class="util-pill" id="btn-open-queue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+              <circle cx="4" cy="6" r="1" fill="currentColor"/><circle cx="4" cy="12" r="1" fill="currentColor"/><circle cx="4" cy="18" r="1" fill="currentColor"/>
+            </svg>
+            <span>Queue</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL OVERLAY -->
+    <div class="modal-backdrop hidden" id="modal-backdrop">
+      <!-- Equalizer Modal -->
+      <div class="modal-sheet hidden" id="modal-eq" role="dialog" aria-label="Equalizer">
+        <div class="modal-header">
+          <h3>Sound &amp; Equalizer</h3>
+          <button class="icon-btn modal-close" aria-label="Close">&times;</button>
+        </div>
+        <div class="preset-row" id="eq-presets">
+          <button class="chip active" data-preset="balanced">Balanced</button>
+          <button class="chip" data-preset="bass">Bass Boost</button>
+          <button class="chip" data-preset="lofi">Lo-Fi Warm</button>
+          <button class="chip" data-preset="vocal">Crystal</button>
+          <button class="chip" data-preset="night">Night Mode</button>
+        </div>
+        <div class="eq-sliders">
+          <label class="slider-row">
+            <span>Bass</span>
+            <input type="range" id="eq-bass" min="-10" max="10" step="0.5" value="0" />
+            <em id="eq-bass-val">0 dB</em>
+          </label>
+          <label class="slider-row">
+            <span>Mid</span>
+            <input type="range" id="eq-mid" min="-10" max="10" step="0.5" value="0" />
+            <em id="eq-mid-val">0 dB</em>
+          </label>
+          <label class="slider-row">
+            <span>Treble</span>
+            <input type="range" id="eq-treble" min="-10" max="10" step="0.5" value="0" />
+            <em id="eq-treble-val">0 dB</em>
+          </label>
+          <label class="slider-row">
+            <span>Volume</span>
+            <input type="range" id="eq-volume" min="0" max="100" step="1" value="85" />
+            <em id="eq-volume-val">85%</em>
+          </label>
+        </div>
+      </div>
+
+      <!-- Sleep Timer Modal -->
+      <div class="modal-sheet hidden" id="modal-sleep" role="dialog" aria-label="Sleep Timer">
+        <div class="modal-header">
+          <h3>Sleep Timer</h3>
+          <button class="icon-btn modal-close" aria-label="Close">&times;</button>
+        </div>
+        <p class="modal-desc" id="sleep-status-text">Pause playback automatically after a set time.</p>
+        <div class="option-list" id="sleep-options">
+          <button class="option-item" data-minutes="0">Off</button>
+          <button class="option-item" data-minutes="5">5 minutes</button>
+          <button class="option-item" data-minutes="15">15 minutes</button>
+          <button class="option-item" data-minutes="30">30 minutes</button>
+          <button class="option-item" data-minutes="60">60 minutes</button>
+          <button class="option-item" data-minutes="end">End of current track</button>
+        </div>
+      </div>
+
+      <!-- Queue Modal -->
+      <div class="modal-sheet hidden" id="modal-queue" role="dialog" aria-label="Up Next Queue">
+        <div class="modal-header">
+          <h3>Up Next</h3>
+          <button class="icon-btn modal-close" aria-label="Close">&times;</button>
+        </div>
+        <div class="track-list modal-scroll" id="queue-list"></div>
+      </div>
+
+      <!-- Playlist Modal -->
+      <div class="modal-sheet hidden" id="modal-playlist" role="dialog" aria-label="Playlists">
+        <div class="modal-header">
+          <h3 id="playlist-modal-title">Add to Playlist</h3>
+          <button class="icon-btn modal-close" aria-label="Close">&times;</button>
+        </div>
+        <form class="new-playlist-form" id="new-playlist-form">
+          <input type="text" id="new-playlist-input" placeholder="Create new playlist..." maxlength="32" required />
+          <button type="submit" class="btn-primary sm">Create</button>
+        </form>
+        <div class="option-list modal-scroll" id="playlist-modal-list"></div>
+      </div>
+    </div>
+
+    <!-- Hidden File Input for Device Audio -->
+    <input type="file" id="audio-file-input" accept="audio/*" multiple hidden />
+
+    <!-- Toast -->
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </div>
+
+  <script src="./audio-engine.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
